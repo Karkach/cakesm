@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts SYSTEM "struts-2.1.dtd" >
+<struts>
+ 	<constant name="struts.devMode" value="true" />
+	<constant name="struts.mapper.alwaysSelectFullNamespace" value="true"/>
+	<constant name="struts.action.extension" value="html,xhtml,,xml,json,action"/>
+	<bean type="org.mql.cakes.struts.business.UtilisateurBusiness" class="org.mql.cakes.struts.business.UtilisateurManager" scope="singleton" />
+	<package name="packageDefault" extends="struts-default" >
+		<result-types>
+			<result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />
+		</result-types>
+		<interceptors>
+			<interceptor name="managerInterceptor" class="org.mql.cakes.struts.web.interceptors.ManagerInterceptor" />
+			<interceptor-stack name="configstack">
+				<interceptor-ref name="managerInterceptor" />
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="configstack"></default-interceptor-ref>
+		<action name="index" class="org.mql.cakes.struts.web.actions.SessionAction" method="sessionOpen">
+			<result type="tiles" name="index">moroccanCakes</result>
+			<result name="profile" type="redirectAction" >  
+				<param name="namespace">/account</param>
+				<param name="actionName">profile</param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="userPackage" extends="packageDefault" namespace="/account">
+		<action name="inscription">
+			<result type="tiles">inscription</result>
+		</action>
+		<action name="seConnecter">
+			<result type="tiles">login</result>
+		</action>
+		<action name="login" class="org.mql.cakes.struts.web.actions.UserAction" method="login">
+			<result type="redirectAction">
+				<param name="actionName">profile</param>
+			</result>
+			<result type="tiles" name="error">login</result>
+		</action>
+		<action name="singUp" class="org.mql.cakes.struts.web.actions.UserAction" method="addUser">
+			<result name="success" type="redirectAction">  
+				<param name="actionName">profile</param>
+			</result>
+		</action>
+		<action name="logout" class="org.mql.cakes.struts.web.actions.UserAction" method="logout">
+			<result type="redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">index</param>
+			</result>
+		</action>
+		<action name="profile" class="org.mql.cakes.struts.web.actions.AnnonceAction" method="listAnnonceOfUser">
+			<result type="tiles" name="success">profile</result>
+			<result type="redirectAction" name ="error">
+					<param name="namespace">/</param>
+					<param name="actionName">index</param>
+			</result>
+		</action>
+		<action name="editProfile">
+			<result type="tiles">editProfile</result>
+			<result type="redirectAction" name ="error">
+					<param name="namespace">/</param>
+					<param name="actionName">index</param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="annoncePackage" extends="packageDefault" namespace="/account/annonce">
+		<action name="ajouterAnnonce">
+			<result type="tiles">ajouterAnnonce</result>
+		</action>
+		<action name="addAnnonce" class="org.mql.cakes.struts.web.actions.AnnonceAction" method="addAnnonce">
+			<result type="redirectAction">
+					<param name="namespace">/</param>
+					<param name="actionName">index</param>
+			</result>
+		</action>
+	</package>
+	
+</struts>
